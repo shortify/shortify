@@ -5,6 +5,7 @@ import (
 	"crypto/sha1"
 	"fmt"
 	"gopkg.in/gorp.v1"
+	"strings"
 	"time"
 )
 
@@ -21,7 +22,7 @@ type User struct {
 
 func NewUser(name string) *User {
 	user := User{Id: 0, Name: name}
-	user.Password = uuid.New()
+	user.Password = strings.Replace(uuid.New(), "-", "", -1)
 	return &user
 }
 
