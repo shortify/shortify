@@ -1,4 +1,4 @@
-# Shortify
+# Shortify [![Build Status](https://travis-ci.org/pseudomuto/shortify-go.svg?branch=master)](https://travis-ci.org/pseudomuto/shortify-go)
 
 A simple URL shortener application written in Go.
 
