@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 set -x
+source script/bootstrap
 go build -o shortify

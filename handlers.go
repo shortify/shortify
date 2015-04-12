@@ -23,39 +23,49 @@ type jsonErr struct {
 	Text string `json:"text"`
 }
 
+func renderError(response http.ResponseWriter, code int, message string) {
+	response.Header().Set("Content-Type", jsonContentType)
+	response.WriteHeader(code)
+	json.NewEncoder(response).Encode(jsonErr{Code: code, Text: message})
+}
+
 func RedirectShow(response http.ResponseWriter, request *http.Request) {
 	params := mux.Vars(request)
 	token := params[TokenRouteParam]
 	redir, err := FindRedirectByToken(token)
 
 	if err != nil {
-		response.Header().Set("Content-Type", jsonContentType)
-		response.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(response).Encode(jsonErr{Code: http.StatusNotFound, Text: "Not Found"})
+		renderError(response, http.StatusNotFound, "Not Found")
 	} else {
 		response.Header().Set("Content-Type", htmlContentType)
 		http.Redirect(response, request, redir.Url, http.StatusMovedPermanently)
 	}
 }
 
-func RedirectCreate(response http.ResponseWriter, request *http.Request) {
-	response.Header().Set("Content-Type", jsonContentType)
+func isAuthorized(request *http.Request) bool {
+	username, password, ok := request.BasicAuth()
+	return ok && IsValidUser(username, password)
+}
 
-	encoder := json.NewEncoder(response)
+func RedirectCreate(response http.ResponseWriter, request *http.Request) {
+	if !isAuthorized(request) {
+		renderError(response, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
+
 	createParams, err := getCreateParams(request.Body)
 	if err != nil {
-		response.WriteHeader(HTTPUnprocessableEntity)
-		encoder.Encode(jsonErr{Code: HTTPUnprocessableEntity, Text: "Invalid parameters"})
+		renderError(response, HTTPUnprocessableEntity, "Invalid parameters")
 		return
 	}
 
 	redir, err := FindOrCreateRedirect(createParams.Url)
 	if err != nil {
-		response.WriteHeader(http.StatusInternalServerError)
-		encoder.Encode(jsonErr{Code: http.StatusInternalServerError, Text: err.Error()})
+		renderError(response, http.StatusInternalServerError, err.Error())
 	} else {
+		response.Header().Set("Content-Type", jsonContentType)
 		response.WriteHeader(http.StatusCreated)
-		encoder.Encode(redir)
+		json.NewEncoder(response).Encode(redir)
 	}
 }
 
