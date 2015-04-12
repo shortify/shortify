@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -54,4 +55,30 @@ func (suite *HandlersSuite) TestRedirectShowWhenNotFound() {
 	router.ServeHTTP(response, request)
 
 	assert.Equal(t, http.StatusNotFound, response.Code)
+}
+
+func (suite *HandlersSuite) TestRedirectCreate() {
+	t := suite.T()
+	params := []byte(`{"url":"http://www.google.com/"}`)
+	request, _ := http.NewRequest("POST", "http://example.com/redirects", bytes.NewBuffer(params))
+	response := httptest.NewRecorder()
+
+	router := mux.NewRouter()
+	router.HandleFunc("/redirects", http.HandlerFunc(RedirectCreate))
+	router.ServeHTTP(response, request)
+
+	assert.Equal(t, http.StatusCreated, response.Code)
+}
+
+func (suite *HandlersSuite) TestRedirectCreateWithBadParams() {
+	t := suite.T()
+	params := []byte(`{"badParam": "http://www.google.com/"}`)
+	request, _ := http.NewRequest("POST", "http://example.com/redirects", bytes.NewBuffer(params))
+	response := httptest.NewRecorder()
+
+	router := mux.NewRouter()
+	router.HandleFunc("/redirects", http.HandlerFunc(RedirectCreate))
+	router.ServeHTTP(response, request)
+
+	assert.Equal(t, HTTPUnprocessableEntity, response.Code)
 }

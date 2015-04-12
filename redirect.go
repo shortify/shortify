@@ -7,10 +7,10 @@ const urlQuery = "SELECT id, token, url, created_at FROM redirects WHERE url = ?
 const encodingSeed = int64(10000)
 
 type Redirect struct {
-	Id        int64     `db:"id"`
-	Token     string    `db:"token"`
-	Url       string    `db:"url"`
-	CreatedAt time.Time `db:"created_at"`
+	Id        int64     `db:"id" json:"id"`
+	Token     string    `db:"token" json:"token"`
+	Url       string    `db:"url" json:"url"`
+	CreatedAt time.Time `db:"created_at" json:"createdAt"`
 }
 
 func NewRedirect(url string) *Redirect {

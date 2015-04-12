@@ -12,8 +12,8 @@ type dbConnectionDetails struct {
 	dialect    gorp.Dialect
 }
 
-var prodDb = dbConnectionDetails{"mysql", "", gorp.MySQLDialect{"InnoDB", "UTF8"}}
-var testDb = dbConnectionDetails{"sqlite3", "/tmp/redirects_db.bin", gorp.SqliteDialect{}}
+var prodDb = dbConnectionDetails{"sqlite3", "/tmp/redirects_db.bin", gorp.SqliteDialect{}}
+var testDb = dbConnectionDetails{"sqlite3", "/tmp/redirects_db_test.bin", gorp.SqliteDialect{}}
 var currentDb = prodDb
 
 func mapForDatabase(db *sql.DB) *gorp.DbMap {
