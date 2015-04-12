@@ -13,6 +13,7 @@ func main() {
 		Route{"CreateRedirect", "POST", "/redirects", RedirectCreate},
 	}
 
+	InitializeDb()
 	router := NewRouter(routes)
 	log.Fatal(http.ListenAndServe(serverPort, router))
 }

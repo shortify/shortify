@@ -4,20 +4,34 @@ import (
 	"database/sql"
 	_ "github.com/mattn/go-sqlite3"
 	"gopkg.in/gorp.v1"
+	"os"
 )
 
-type dbConnectionDetails struct {
+const dbDriverEnvVar = "SHORTIFY_DB_DRIVER"
+const dbDataSourceEnvVar = "SHORTIFY_DB_DATASOURCE"
+
+type DbConnectionDetails struct {
 	driver     string
 	dataSource string
-	dialect    gorp.Dialect
 }
 
-var prodDb = dbConnectionDetails{"sqlite3", "/tmp/redirects_db.bin", gorp.SqliteDialect{}}
-var testDb = dbConnectionDetails{"sqlite3", "/tmp/redirects_db_test.bin", gorp.SqliteDialect{}}
+func (self *DbConnectionDetails) Dialect() gorp.Dialect {
+	switch self.driver {
+	case "mysql":
+		return gorp.MySQLDialect{"InnoDB", "UTF8"}
+	case "postgres":
+		return gorp.PostgresDialect{}
+	default:
+		return gorp.SqliteDialect{}
+	}
+}
+
+var testDb = DbConnectionDetails{"sqlite3", "/tmp/redirects_db_test.bin"}
+var prodDb = DbConnectionDetails{os.Getenv(dbDriverEnvVar), os.Getenv(dbDataSourceEnvVar)}
 var currentDb = prodDb
 
 func mapForDatabase(db *sql.DB) *gorp.DbMap {
-	dbMap := &gorp.DbMap{Db: db, Dialect: currentDb.dialect}
+	dbMap := &gorp.DbMap{Db: db, Dialect: currentDb.Dialect()}
 	dbMap.AddTableWithName(Redirect{}, "redirects").SetKeys(true, "Id")
 	return dbMap
 }
