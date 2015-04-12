@@ -38,10 +38,21 @@ func RedirectShow(response http.ResponseWriter, request *http.Request) {
 	}
 }
 
+func isAuthorized(request *http.Request) bool {
+	username, password, ok := request.BasicAuth()
+	return ok && IsValidUser(username, password)
+}
+
 func RedirectCreate(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", jsonContentType)
-
 	encoder := json.NewEncoder(response)
+
+	if !isAuthorized(request) {
+		response.WriteHeader(http.StatusUnauthorized)
+		encoder.Encode(jsonErr{Code: http.StatusUnauthorized, Text: "Unauthorized"})
+		return
+	}
+
 	createParams, err := getCreateParams(request.Body)
 	if err != nil {
 		response.WriteHeader(HTTPUnprocessableEntity)
