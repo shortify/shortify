@@ -33,6 +33,7 @@ var currentDb = prodDb
 func mapForDatabase(db *sql.DB) *gorp.DbMap {
 	dbMap := &gorp.DbMap{Db: db, Dialect: currentDb.Dialect()}
 	dbMap.AddTableWithName(Redirect{}, "redirects").SetKeys(true, "Id")
+	dbMap.AddTableWithName(User{}, "users").SetKeys(true, "Id")
 	return dbMap
 }
 
@@ -89,6 +90,17 @@ func DbUpdate(entities ...interface{}) (int64, error) {
 	defer db.Close()
 	dbMap := mapForDatabase(db)
 	return dbMap.Update(entities...)
+}
+
+func DbSelectAll(holder interface{}, query string, args ...interface{}) ([]interface{}, error) {
+	db, err := openDb()
+	if err != nil {
+		return nil, err
+	}
+
+	defer db.Close()
+	dbMap := mapForDatabase(db)
+	return dbMap.Select(holder, query, args...)
 }
 
 func DbSelectOne(holder interface{}, query string, args ...interface{}) error {
