@@ -11,6 +11,9 @@ $ script/build
 
 Now you can take the compiled `shortify` executable and put it where ever you want.
 
+**NOTE:** Currently, only go `1.4+` is supported. This should be easy to fix, so expect a new
+release shortly.
+
 ## Using Shortify
 
 Shortify is very simple. It has two endpoints:
