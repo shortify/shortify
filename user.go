@@ -26,6 +26,12 @@ func NewUser(name string) *User {
 	return &user
 }
 
+func GetUser(name string) (User, error) {
+	var user User
+	err := DbSelectOne(&user, getSingleUserQuery, name)
+	return user, err
+}
+
 func GetUsers() ([]User, error) {
 	var users []User
 	_, err := DbSelectAll(&users, getUsersQuery)

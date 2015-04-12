@@ -73,3 +73,17 @@ func (suite *UserSuite) TestIsValidUser() {
 	valid = IsValidUser("whoami", user.Password)
 	assert.False(t, valid)
 }
+
+func (suite *UserSuite) TestGetUser() {
+	t := suite.T()
+	user := NewUser("testuser")
+	err := user.Save()
+	assert.Nil(t, err)
+
+	found, err := GetUser("testuser")
+	assert.Nil(t, err)
+	assert.Equal(t, user.Id, found.Id)
+
+	found, err = GetUser("whoisthis")
+	assert.NotNil(t, err)
+}
