@@ -22,7 +22,7 @@ type User struct {
 
 func NewUser(name string) *User {
 	user := User{Id: 0, Name: name}
-	user.Password = strings.Replace(uuid.New(), "-", "", -1)
+	user.Password = newPassword()
 	return &user
 }
 
@@ -55,6 +55,16 @@ func hashString(plaintext string) string {
 	hash := sha1.New()
 	hash.Write([]byte(plaintext))
 	return fmt.Sprintf("%x", hash.Sum(nil))
+}
+
+func newPassword() string {
+	return strings.Replace(uuid.New(), "-", "", -1)
+}
+
+func (self *User) ResetPassword() error {
+	self.Password = newPassword()
+	self.PasswordHash = hashString(self.Password)
+	return self.Save()
 }
 
 func (self *User) Save() error {

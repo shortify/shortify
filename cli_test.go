@@ -32,3 +32,9 @@ func (suite *CLISuite) TestCreateUserCommand() {
 	command := GetCLICommand([]string{"shortify", "users", "create", "pseudomuto"})
 	assert.True(t, strings.HasPrefix(command.Description, "users create [username] ---"))
 }
+
+func (suite *CLISuite) TestResetUserPasswordCommand() {
+	t := suite.T()
+	command := GetCLICommand([]string{"shortify", "users", "resetpw", "pseudomuto"})
+	assert.True(t, strings.HasPrefix(command.Description, "users resetpw [username] ---"))
+}

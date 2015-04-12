@@ -87,3 +87,18 @@ func (suite *UserSuite) TestGetUser() {
 	found, err = GetUser("whoisthis")
 	assert.NotNil(t, err)
 }
+
+func (suite *UserSuite) TestResetPassword() {
+	t := suite.T()
+	user := NewUser("testuser")
+	err := user.Save()
+	assert.Nil(t, err)
+
+	oldPassword := user.Password
+	oldPasswordHash := user.PasswordHash
+
+	err = user.ResetPassword()
+	assert.Nil(t, err)
+	assert.NotEqual(t, oldPassword, user.Password)
+	assert.NotEqual(t, oldPasswordHash, user.PasswordHash)
+}

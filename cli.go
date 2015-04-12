@@ -18,6 +18,7 @@ func init() {
 	commands = []CLICommand{
 		CLICommand{"users list", "users list --- lists all users", listUsers},
 		CLICommand{"users create .+", "users create [username] --- creates a new user", createUser},
+		CLICommand{"users resetpw .+", "users resetpw [username] --- generates a new password for [username]", resetPassword},
 		CLICommand{".*", "help --- shows this menu", help},
 	}
 }
@@ -74,7 +75,27 @@ func createUser(args []string) {
 		fmt.Printf("ERROR: %s\n", err.Error())
 	} else {
 		fmt.Printf("Created user: %s\n", user.Name)
-		fmt.Printf("Password: %s\n\n", user.Password)
-		fmt.Println("The password is not stored in plaintext and cannot be recovered. Be sure to copy it now.")
+		showPassword(*user)
 	}
+}
+
+func resetPassword(args []string) {
+	username := args[3]
+	user, err := GetUser(username)
+	if err != nil {
+		fmt.Printf("User %s not found", username)
+		return
+	}
+
+	if err = user.ResetPassword(); err != nil {
+		fmt.Printf("ERROR: %s\n", err.Error())
+	} else {
+		fmt.Printf("Reset password for user: %s\n", user.Name)
+		showPassword(user)
+	}
+}
+
+func showPassword(user User) {
+	fmt.Printf("Password: %s\n\n", user.Password)
+	fmt.Println("The password is not stored in plaintext and cannot be recovered. Be sure to copy it now.")
 }
