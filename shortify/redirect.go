@@ -1,4 +1,4 @@
-package main
+package shortify
 
 import "time"
 
@@ -14,7 +14,11 @@ type Redirect struct {
 }
 
 func NewRedirect(url string) *Redirect {
-	return &Redirect{0, "", url, time.Now()}
+	redir := new(Redirect)
+	redir.Url = url
+	redir.CreatedAt = time.Now()
+
+	return redir
 }
 
 func (self *Redirect) isNew() bool {

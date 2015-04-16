@@ -1,4 +1,4 @@
-package main
+package shortify
 
 import (
 	"code.google.com/p/go-uuid/uuid"
@@ -21,9 +21,11 @@ type User struct {
 }
 
 func NewUser(name string) *User {
-	user := User{Id: 0, Name: name}
+	user := new(User)
+	user.Name = name
 	user.Password = newPassword()
-	return &user
+
+	return user
 }
 
 func GetUser(name string) (User, error) {

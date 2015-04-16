@@ -1,4 +1,4 @@
-package main
+package shortify
 
 type Encoder struct {
 	charset string
