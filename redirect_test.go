@@ -30,7 +30,7 @@ func (suite *RedirectSuite) TearDownTest() {
 func (suite *RedirectSuite) TestNewRedirect() {
 	t := suite.T()
 	redir := NewRedirect("http://www.google.com/")
-	assert.Equal(t, 0, redir.Id)
+	assert.Equal(t, int64(0), redir.Id)
 	assert.Empty(t, redir.Token)
 	assert.Equal(t, "http://www.google.com/", redir.Url)
 }
