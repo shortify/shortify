@@ -10,9 +10,20 @@ func NewEncoder(charset string) *Encoder {
 	return e
 }
 
-var DefaultEncoder = NewEncoder("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-var UnambiguousEncoder = NewEncoder("23456789abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ")
-var ShortifyEncoder = DefaultEncoder
+var encoders = make(map[string]*Encoder)
+var ShortifyEncoder *Encoder
+
+func init() {
+	encoders["default"] = NewEncoder("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+	encoders["unambiguous"] = NewEncoder("23456789abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ")
+	ShortifyEncoder = encoders["default"]
+}
+
+func SetDefaultEncoder(name string) {
+	if encoder, ok := encoders[name]; ok {
+		ShortifyEncoder = encoder
+	}
+}
 
 func (self *Encoder) Encode(value int64) string {
 	if value == 0 {

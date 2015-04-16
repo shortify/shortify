@@ -12,6 +12,8 @@ func main() {
 	InitializeDb()
 
 	if !processArgs() {
+		setEncoder()
+
 		routes := []Route{
 			Route{"PerformRedirect", "GET", "/{token}", RedirectShow},
 			Route{"CreateRedirect", "POST", "/redirects", RedirectCreate},
@@ -19,6 +21,12 @@ func main() {
 
 		router := NewRouter(routes)
 		log.Fatal(http.ListenAndServe(serverPort, router))
+	}
+}
+
+func setEncoder() {
+	if encoder := os.Getenv("SHORTIFY_ENCODER"); encoder != "" {
+		SetDefaultEncoder(encoder)
 	}
 }
 
