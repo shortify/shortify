@@ -15,12 +15,7 @@ func main() {
 	if !processArgs() {
 		setEncoder()
 
-		routes := []shortify.Route{
-			shortify.Route{"PerformRedirect", "GET", "/{token}", shortify.RedirectShow},
-			shortify.Route{"CreateRedirect", "POST", "/redirects", shortify.RedirectCreate},
-		}
-
-		router := shortify.NewRouter(routes)
+		router := shortify.NewRouter()
 		log.Fatal(http.ListenAndServe(serverPort, router))
 	}
 }
