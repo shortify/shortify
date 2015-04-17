@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
-set -x
+set -e
 source script/bootstrap
-go build -o shortify
+
+echo -n "Building shortify..."
+go build -o bin/shortify
+echo "done."
+
+echo "Build complete. Output file can be found at ./bin/shortify"
