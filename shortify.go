@@ -10,8 +10,6 @@ import (
 const serverPort = ":8080"
 
 func main() {
-	shortify.InitializeDb()
-
 	if !shortify.HandleCommandLine(os.Args) {
 		setEncoder()
 

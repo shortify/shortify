@@ -30,19 +30,19 @@ func NewUser(name string) *User {
 
 func GetUser(name string) (User, error) {
 	var user User
-	err := DbSelectOne(&user, getSingleUserQuery, name)
+	err := db.selectOne(&user, getSingleUserQuery, name)
 	return user, err
 }
 
 func GetUsers() ([]User, error) {
 	var users []User
-	_, err := DbSelectAll(&users, getUsersQuery)
+	_, err := db.selectAll(&users, getUsersQuery)
 	return users, err
 }
 
 func IsValidUser(name string, password string) bool {
 	var user User
-	if err := DbSelectOne(&user, getSingleUserQuery, name); err != nil {
+	if err := db.selectOne(&user, getSingleUserQuery, name); err != nil {
 		return false
 	}
 
@@ -71,10 +71,10 @@ func (self *User) ResetPassword() error {
 
 func (self *User) Save() error {
 	if self.isNew() {
-		return DbInsert(self)
+		return db.insert(self)
 	}
 
-	_, err := DbUpdate(self)
+	_, err := db.update(self)
 	return err
 }
 

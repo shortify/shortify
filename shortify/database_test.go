@@ -15,11 +15,11 @@ func TestDatabaseSuite(t *testing.T) {
 	suite.Run(t, new(DatabaseSuite))
 }
 
-func (suite *DatabaseSuite) TestDbConnectionDetails() {
+func (suite *DatabaseSuite) TestdbConnectionInfo() {
 	t := suite.T()
-	mysql := DbConnectionDetails{"mysql", ""}
-	postgres := DbConnectionDetails{"postgres", ""}
-	sqlite := DbConnectionDetails{"sqlite", ""}
+	mysql := dbConnectionInfo{"mysql", ""}
+	postgres := dbConnectionInfo{"postgres", ""}
+	sqlite := dbConnectionInfo{"sqlite", ""}
 
 	assert.IsType(t, gorp.MySQLDialect{}, mysql.Dialect())
 	assert.IsType(t, gorp.PostgresDialect{}, postgres.Dialect())

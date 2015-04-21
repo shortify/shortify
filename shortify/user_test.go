@@ -16,16 +16,11 @@ func TestUserSuite(t *testing.T) {
 }
 
 func (suite *UserSuite) SetupSuite() {
-	SetCurrentDb(true)
-	InitializeDb()
-}
-
-func (suite *UserSuite) TearDownSuite() {
-	SetCurrentDb(false)
+	useTestingDatabase()
 }
 
 func (suite *UserSuite) TearDownTest() {
-	TruncateDb()
+	db.reset()
 }
 
 func (suite *UserSuite) TestNewUser() {

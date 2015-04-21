@@ -20,8 +20,7 @@ func TestHandlers(t *testing.T) {
 }
 
 func (suite *HandlersSuite) SetupSuite() {
-	SetCurrentDb(true)
-	InitializeDb()
+	useTestingDatabase()
 }
 
 func (suite *HandlersSuite) SetupTest() {
@@ -29,12 +28,8 @@ func (suite *HandlersSuite) SetupTest() {
 	suite.redirect.Save()
 }
 
-func (suite *HandlersSuite) TearDownSuite() {
-	SetCurrentDb(false)
-}
-
 func (suite *HandlersSuite) TearDownTest() {
-	TruncateDb()
+	db.reset()
 }
 
 func (suite *HandlersSuite) TestPerformRedirectHandlerWhenFound() {

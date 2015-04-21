@@ -15,16 +15,11 @@ func TestRedirectSuite(t *testing.T) {
 }
 
 func (suite *RedirectSuite) SetupSuite() {
-	SetCurrentDb(true)
-	InitializeDb()
-}
-
-func (suite *RedirectSuite) TearDownSuite() {
-	SetCurrentDb(false)
+	useTestingDatabase()
 }
 
 func (suite *RedirectSuite) TearDownTest() {
-	TruncateDb()
+	db.reset()
 }
 
 func (suite *RedirectSuite) TestNewRedirect() {
