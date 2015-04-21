@@ -17,24 +17,24 @@ func TestCLISuite(t *testing.T) {
 
 func (suite *CLISuite) TestHelpCommand() {
 	t := suite.T()
-	command := GetCLICommand([]string{"shortify", "help"})
-	assert.True(t, strings.HasPrefix(command.Description, "help ---"))
+	command := parseCommand([]string{"shortify", "help"})
+	assert.True(t, strings.HasPrefix(command.description, "help ---"))
 }
 
 func (suite *CLISuite) TestListUsersCommand() {
 	t := suite.T()
-	command := GetCLICommand([]string{"shortify", "users", "list"})
-	assert.True(t, strings.HasPrefix(command.Description, "users list ---"))
+	command := parseCommand([]string{"shortify", "users", "list"})
+	assert.True(t, strings.HasPrefix(command.description, "users list ---"))
 }
 
 func (suite *CLISuite) TestCreateUserCommand() {
 	t := suite.T()
-	command := GetCLICommand([]string{"shortify", "users", "create", "pseudomuto"})
-	assert.True(t, strings.HasPrefix(command.Description, "users create [username] ---"))
+	command := parseCommand([]string{"shortify", "users", "create", "pseudomuto"})
+	assert.True(t, strings.HasPrefix(command.description, "users create [username] ---"))
 }
 
 func (suite *CLISuite) TestResetUserPasswordCommand() {
 	t := suite.T()
-	command := GetCLICommand([]string{"shortify", "users", "resetpw", "pseudomuto"})
-	assert.True(t, strings.HasPrefix(command.Description, "users resetpw [username] ---"))
+	command := parseCommand([]string{"shortify", "users", "resetpw", "pseudomuto"})
+	assert.True(t, strings.HasPrefix(command.description, "users resetpw [username] ---"))
 }

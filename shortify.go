@@ -12,7 +12,7 @@ const serverPort = ":8080"
 func main() {
 	shortify.InitializeDb()
 
-	if !processArgs() {
+	if !shortify.HandleCommandLine(os.Args) {
 		setEncoder()
 
 		router := shortify.NewRouter()
@@ -24,15 +24,4 @@ func setEncoder() {
 	if encoder := os.Getenv("SHORTIFY_ENCODER"); encoder != "" {
 		shortify.SetDefaultEncoder(encoder)
 	}
-}
-
-func processArgs() bool {
-	args := os.Args
-	if len(args) > 1 {
-		command := shortify.GetCLICommand(args)
-		command.Handler(args)
-		return true
-	}
-
-	return false
 }
