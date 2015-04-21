@@ -23,13 +23,7 @@ type jsonErr struct {
 	Text string `json:"text"`
 }
 
-func renderError(response http.ResponseWriter, code int, message string) {
-	response.Header().Set("Content-Type", jsonContentType)
-	response.WriteHeader(code)
-	json.NewEncoder(response).Encode(jsonErr{Code: code, Text: message})
-}
-
-func RedirectShow(response http.ResponseWriter, request *http.Request) {
+func performRedirectHandler(response http.ResponseWriter, request *http.Request) {
 	params := mux.Vars(request)
 	token := params[TokenRouteParam]
 	redir, err := FindRedirectByToken(token)
@@ -42,31 +36,45 @@ func RedirectShow(response http.ResponseWriter, request *http.Request) {
 	}
 }
 
-func isAuthorized(request *http.Request) bool {
-	username, password, ok := request.BasicAuth()
-	return ok && IsValidUser(username, password)
+func createRedirectHandler(response http.ResponseWriter, request *http.Request) {
+	withAuthorization(response, request, func() {
+		params, err := getCreateParams(request.Body)
+		if err != nil {
+			renderError(response, HTTPUnprocessableEntity, "Invalid parameters")
+			return
+		}
+
+		redir, err := FindOrCreateRedirect(params.Url)
+		if err != nil {
+			renderError(response, http.StatusInternalServerError, err.Error())
+		} else {
+			asJson(response, http.StatusCreated, func() {
+				json.NewEncoder(response).Encode(redir)
+			})
+		}
+	})
 }
 
-func RedirectCreate(response http.ResponseWriter, request *http.Request) {
-	if !isAuthorized(request) {
-		renderError(response, http.StatusUnauthorized, "Unauthorized")
+func renderError(response http.ResponseWriter, code int, message string) {
+	asJson(response, code, func() {
+		json.NewEncoder(response).Encode(jsonErr{Code: code, Text: message})
+	})
+}
+
+func withAuthorization(response http.ResponseWriter, request *http.Request, handler func()) {
+	username, password, ok := request.BasicAuth()
+	if ok && IsValidUser(username, password) {
+		handler()
 		return
 	}
 
-	createParams, err := getCreateParams(request.Body)
-	if err != nil {
-		renderError(response, HTTPUnprocessableEntity, "Invalid parameters")
-		return
-	}
+	renderError(response, http.StatusUnauthorized, "Unauthorized")
+}
 
-	redir, err := FindOrCreateRedirect(createParams.Url)
-	if err != nil {
-		renderError(response, http.StatusInternalServerError, err.Error())
-	} else {
-		response.Header().Set("Content-Type", jsonContentType)
-		response.WriteHeader(http.StatusCreated)
-		json.NewEncoder(response).Encode(redir)
-	}
+func asJson(response http.ResponseWriter, code int, handler func()) {
+	response.Header().Set("Content-Type", jsonContentType)
+	response.WriteHeader(code)
+	handler()
 }
 
 func getCreateParams(body io.ReadCloser) (createParams, error) {

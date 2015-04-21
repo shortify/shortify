@@ -18,8 +18,8 @@ var routes []route
 
 func init() {
 	routes = []route{
-		route{"redirect", "GET", "/{token}", RedirectShow},
-		route{"create", "POST", "/redirects", RedirectCreate},
+		route{"redirect", "GET", "/{token}", performRedirectHandler},
+		route{"create", "POST", "/redirects", createRedirectHandler},
 	}
 }
 
