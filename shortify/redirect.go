@@ -1,28 +1,25 @@
 package shortify
 
-import "time"
+import (
+	"gopkg.in/gorp.v1"
+	"time"
+)
 
 const tokenQuery = "SELECT id, token, url, created_at FROM redirects WHERE token = ?"
 const urlQuery = "SELECT id, token, url, created_at FROM redirects WHERE url = ?"
 const encodingSeed = int64(10000)
 
 type Redirect struct {
-	Id        int64     `db:"id" json:"id"`
-	Token     string    `db:"token" json:"token"`
-	Url       string    `db:"url" json:"url"`
-	CreatedAt time.Time `db:"created_at" json:"createdAt"`
+	model
+	Token string `db:"token" json:"token"`
+	Url   string `db:"url" json:"url"`
 }
 
 func NewRedirect(url string) *Redirect {
 	redir := new(Redirect)
 	redir.Url = url
-	redir.CreatedAt = time.Now()
 
 	return redir
-}
-
-func (self *Redirect) isNew() bool {
-	return self.Id == 0
 }
 
 func FindOrCreateRedirect(url string) (Redirect, error) {
@@ -53,4 +50,9 @@ func (self *Redirect) Save() error {
 
 	_, err := db.update(self)
 	return err
+}
+
+func (self *Redirect) PreInsert(sqlExec gorp.SqlExecutor) error {
+	self.CreatedAt = time.Now()
+	return nil
 }
