@@ -1,29 +1,30 @@
-package main
+package shortify
 
-import "time"
+import (
+	"gopkg.in/gorp.v1"
+	"time"
+)
 
 const tokenQuery = "SELECT id, token, url, created_at FROM redirects WHERE token = ?"
 const urlQuery = "SELECT id, token, url, created_at FROM redirects WHERE url = ?"
 const encodingSeed = int64(10000)
 
 type Redirect struct {
-	Id        int64     `db:"id" json:"id"`
-	Token     string    `db:"token" json:"token"`
-	Url       string    `db:"url" json:"url"`
-	CreatedAt time.Time `db:"created_at" json:"createdAt"`
+	model
+	Token string `db:"token" json:"token"`
+	Url   string `db:"url" json:"url"`
 }
 
 func NewRedirect(url string) *Redirect {
-	return &Redirect{0, "", url, time.Now()}
-}
+	redir := new(Redirect)
+	redir.Url = url
 
-func (self *Redirect) isNew() bool {
-	return self.Id == 0
+	return redir
 }
 
 func FindOrCreateRedirect(url string) (Redirect, error) {
 	var redir Redirect
-	err := DbSelectOne(&redir, urlQuery, url)
+	err := db.selectOne(&redir, urlQuery, url)
 	if err != nil {
 		redir = *NewRedirect(url)
 		err = redir.Save()
@@ -34,19 +35,24 @@ func FindOrCreateRedirect(url string) (Redirect, error) {
 
 func FindRedirectByToken(token string) (Redirect, error) {
 	var redir Redirect
-	err := DbSelectOne(&redir, tokenQuery, token)
+	err := db.selectOne(&redir, tokenQuery, token)
 	return redir, err
 }
 
 func (self *Redirect) Save() error {
 	if self.isNew() {
-		if err := DbInsert(self); err != nil {
+		if err := db.insert(self); err != nil {
 			return err
 		}
 
 		self.Token = ShortifyEncoder.Encode(self.Id + encodingSeed)
 	}
 
-	_, err := DbUpdate(self)
+	_, err := db.update(self)
 	return err
+}
+
+func (self *Redirect) PreInsert(sqlExec gorp.SqlExecutor) error {
+	self.CreatedAt = time.Now()
+	return nil
 }

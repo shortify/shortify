@@ -1,4 +1,4 @@
-package main
+package shortify
 
 import (
 	"bytes"
@@ -20,8 +20,7 @@ func TestHandlers(t *testing.T) {
 }
 
 func (suite *HandlersSuite) SetupSuite() {
-	SetCurrentDb(true)
-	InitializeDb()
+	useTestingDatabase()
 }
 
 func (suite *HandlersSuite) SetupTest() {
@@ -29,34 +28,30 @@ func (suite *HandlersSuite) SetupTest() {
 	suite.redirect.Save()
 }
 
-func (suite *HandlersSuite) TearDownSuite() {
-	SetCurrentDb(false)
-}
-
 func (suite *HandlersSuite) TearDownTest() {
-	TruncateDb()
+	db.reset()
 }
 
-func (suite *HandlersSuite) TestRedirectShowWhenFound() {
+func (suite *HandlersSuite) TestPerformRedirectHandlerWhenFound() {
 	t := suite.T()
 	request, _ := http.NewRequest("GET", "http://example.com/"+suite.redirect.Token, nil)
 	response := httptest.NewRecorder()
 
 	router := mux.NewRouter()
-	router.HandleFunc("/{token}", http.HandlerFunc(RedirectShow))
+	router.HandleFunc("/{token}", http.HandlerFunc(performRedirectHandler))
 	router.ServeHTTP(response, request)
 
 	assert.Equal(t, http.StatusMovedPermanently, response.Code)
 	assert.Equal(t, suite.redirect.Url, response.HeaderMap.Get("Location"))
 }
 
-func (suite *HandlersSuite) TestRedirectShowWhenNotFound() {
+func (suite *HandlersSuite) TestPerformRedirectHandlerWhenNotFound() {
 	t := suite.T()
 	request, _ := http.NewRequest("GET", "http://example.com/notFound", nil)
 	response := httptest.NewRecorder()
 
 	router := mux.NewRouter()
-	router.HandleFunc("/{token}", http.HandlerFunc(RedirectShow))
+	router.HandleFunc("/{token}", http.HandlerFunc(performRedirectHandler))
 	router.ServeHTTP(response, request)
 
 	assert.Equal(t, http.StatusNotFound, response.Code)
@@ -70,7 +65,7 @@ func makeUser(name string, t *testing.T) *User {
 	return user
 }
 
-func (suite *HandlersSuite) TestRedirectCreate() {
+func (suite *HandlersSuite) TestCreateRedirectHandler() {
 	t := suite.T()
 	user := makeUser("testuser", t)
 	params := []byte(`{"url":"http://www.google.com/"}`)
@@ -80,13 +75,13 @@ func (suite *HandlersSuite) TestRedirectCreate() {
 	response := httptest.NewRecorder()
 
 	router := mux.NewRouter()
-	router.HandleFunc("/redirects", http.HandlerFunc(RedirectCreate))
+	router.HandleFunc("/redirects", http.HandlerFunc(createRedirectHandler))
 	router.ServeHTTP(response, request)
 
 	assert.Equal(t, http.StatusCreated, response.Code)
 }
 
-func (suite *HandlersSuite) TestRedirectCreateWithBadParams() {
+func (suite *HandlersSuite) TestCreateRedirectHandlerWithBadParams() {
 	t := suite.T()
 	user := makeUser("testuser", t)
 	params := []byte(`{"badParam": "http://www.google.com/"}`)
@@ -96,13 +91,13 @@ func (suite *HandlersSuite) TestRedirectCreateWithBadParams() {
 	response := httptest.NewRecorder()
 
 	router := mux.NewRouter()
-	router.HandleFunc("/redirects", http.HandlerFunc(RedirectCreate))
+	router.HandleFunc("/redirects", http.HandlerFunc(createRedirectHandler))
 	router.ServeHTTP(response, request)
 
 	assert.Equal(t, HTTPUnprocessableEntity, response.Code)
 }
 
-func (suite *HandlersSuite) TestRedirectCreateWithBadPassword() {
+func (suite *HandlersSuite) TestCreateRedirectHandlerWithBadPassword() {
 	t := suite.T()
 	user := makeUser("testuser", t)
 	params := []byte(`{"url": "http://www.google.com/"}`)
@@ -112,13 +107,13 @@ func (suite *HandlersSuite) TestRedirectCreateWithBadPassword() {
 	response := httptest.NewRecorder()
 
 	router := mux.NewRouter()
-	router.HandleFunc("/redirects", http.HandlerFunc(RedirectCreate))
+	router.HandleFunc("/redirects", http.HandlerFunc(createRedirectHandler))
 	router.ServeHTTP(response, request)
 
 	assert.Equal(t, http.StatusUnauthorized, response.Code)
 }
 
-func (suite *HandlersSuite) TestRedirectCreateWithBadUser() {
+func (suite *HandlersSuite) TestCreateRedirectHandlerWithBadUser() {
 	t := suite.T()
 	user := makeUser("testuser", t)
 	params := []byte(`{"url": "http://www.google.com/"}`)
@@ -128,7 +123,7 @@ func (suite *HandlersSuite) TestRedirectCreateWithBadUser() {
 	response := httptest.NewRecorder()
 
 	router := mux.NewRouter()
-	router.HandleFunc("/redirects", http.HandlerFunc(RedirectCreate))
+	router.HandleFunc("/redirects", http.HandlerFunc(createRedirectHandler))
 	router.ServeHTTP(response, request)
 
 	assert.Equal(t, http.StatusUnauthorized, response.Code)

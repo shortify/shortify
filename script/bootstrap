@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
-set -x
-go get -t .
+echo -n "Fetching dependencies..."
+go get -t ./...
+echo "done."

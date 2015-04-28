@@ -1,4 +1,4 @@
-package main
+package shortify
 
 import (
 	"fmt"
@@ -6,29 +6,39 @@ import (
 	"strings"
 )
 
-type CLICommand struct {
-	Pattern     string
-	Description string
-	Handler     func([]string)
+type command struct {
+	pattern     string
+	description string
+	handler     func([]string)
 }
 
-var commands []CLICommand
+var commands []command
 
 func init() {
-	commands = []CLICommand{
-		CLICommand{"users list", "users list --- lists all users", listUsers},
-		CLICommand{"users create .+", "users create [username] --- creates a new user", createUser},
-		CLICommand{"users resetpw .+", "users resetpw [username] --- generates a new password for [username]", resetPassword},
-		CLICommand{".*", "help --- shows this menu", help},
+	commands = []command{
+		command{"users list", "users list --- lists all users", listUsers},
+		command{"users create .+", "users create [username] --- creates a new user", createUser},
+		command{"users resetpw .+", "users resetpw [username] --- generates a new password for [username]", resetPassword},
+		command{".*", "help --- shows this menu", help},
 	}
 }
 
-func GetCLICommand(args []string) CLICommand {
+func HandleCommandLine(args []string) bool {
+	if len(args) > 1 {
+		command := parseCommand(args)
+		command.handler(args)
+		return true
+	}
+
+	return false
+}
+
+func parseCommand(args []string) command {
 	helpCommand := commands[len(commands)-1]
 	cmdLine := strings.Join(args[1:], " ")
 
 	for _, cmd := range commands {
-		if match, _ := regexp.MatchString(cmd.Pattern, cmdLine); match {
+		if match, _ := regexp.MatchString(cmd.pattern, cmdLine); match {
 			return cmd
 		}
 	}
@@ -44,7 +54,7 @@ func help(args []string) {
 	fmt.Printf("%s --- runs the main application\n", appName)
 
 	for _, cmd := range commands {
-		fmt.Printf("%s %s\n", appName, cmd.Description)
+		fmt.Printf("%s %s\n", appName, cmd.description)
 	}
 }
 
