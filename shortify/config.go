@@ -12,6 +12,7 @@ type appConfig struct {
 	}
 	Settings struct {
 		Alphabet string
+		Port     int
 	}
 }
 
@@ -25,6 +26,7 @@ func Configure(configFile string) bool {
 
 	shortifyDb = newDatabase(cfg.Database.Provider, cfg.Database.DataSource)
 	shortifyEncoder = encoder{cfg.Settings.Alphabet}
+	shortifyPort = cfg.Settings.Port
 	return true
 }
 

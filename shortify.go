@@ -8,13 +8,11 @@ import (
 	"path/filepath"
 )
 
-const serverPort = ":8080"
-
 func main() {
 	if shortify.Configure(configFilePath()) {
 		if !shortify.HandleCommandLine(os.Args) {
 			router := shortify.NewRouter()
-			log.Fatal(http.ListenAndServe(serverPort, router))
+			log.Fatal(http.ListenAndServe(shortify.ServerPort(), router))
 		}
 	}
 }

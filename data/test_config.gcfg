@@ -7,3 +7,4 @@ dataSource = user=testuser password=testpass dbname=testdb sslmode=disable
 ; this, so choose wisely.
 ;alphabet = 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ # standard base62
 alphabet = 23456789abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ # without ambiguous characters
+port = 8080
