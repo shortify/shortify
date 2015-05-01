@@ -25,12 +25,33 @@ Here's an example of a typical config file:
 ```
 [database]
 provider = mysql
-dataSource = tcp:localhost:3306*mydb/myuser/mypassword
+dataSource = tcp://localhost:3306*mydb/myuser/mypassword
 
 [settings]
 ; alphanumeric without abiguous characters
 alphabet = 23456789abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ
 port = 80
+```
+
+Any of these settings can be supplied as an env var by using `$ENV_VAR_NAME` as the value. For example, if you have the
+following environment variables set:
+
+```
+export SHORTIFY_DATASOURCE=tcp://localhost:3306*mydb/myuser/mypassword
+export SHORTIFY_PORT=8080
+```
+
+Then you can use those values in the configuration like this:
+
+```
+[database]
+provider = mysql
+dataSource = $SHORTIFY_DATASOURCE
+
+[settings]
+; alphanumeric without abiguous characters
+alphabet = 23456789abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ
+port = $SHORTIFY_PORT
 ```
 
 ### Running the App

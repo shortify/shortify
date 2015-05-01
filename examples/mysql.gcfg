@@ -1,6 +1,6 @@
 [database]
 provider = mysql
-dataSource = tcp:localhost:3306*mydb/myuser/mypassword
+dataSource = tcp://localhost:3306*mydb/myuser/mypassword
 
 [settings]
 alphabet = 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ

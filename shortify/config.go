@@ -3,6 +3,8 @@ package shortify
 import (
 	"code.google.com/p/gcfg"
 	"log"
+	"os"
+	"strings"
 )
 
 type appConfig struct {
@@ -12,8 +14,15 @@ type appConfig struct {
 	}
 	Settings struct {
 		Alphabet string
-		Port     int
+		Port     string
 	}
+}
+
+func (self *appConfig) sanitize() {
+	self.Database.Provider = valueOrEnvVar(self.Database.Provider)
+	self.Database.DataSource = valueOrEnvVar(self.Database.DataSource)
+	self.Settings.Alphabet = valueOrEnvVar(self.Settings.Alphabet)
+	self.Settings.Port = valueOrEnvVar(self.Settings.Port)
 }
 
 func Configure(configFile string) bool {
@@ -33,11 +42,29 @@ func Configure(configFile string) bool {
 func loadConfigFromString(configString string) (appConfig, error) {
 	cfg := new(appConfig)
 	err := gcfg.ReadStringInto(cfg, configString)
+
+	if cfg != nil {
+		cfg.sanitize()
+	}
+
 	return *cfg, err
 }
 
 func loadConfigFromFile(filePath string) (appConfig, error) {
 	cfg := new(appConfig)
 	err := gcfg.ReadFileInto(cfg, filePath)
+
+	if cfg != nil {
+		cfg.sanitize()
+	}
+
 	return *cfg, err
+}
+
+func valueOrEnvVar(value string) string {
+	if strings.HasPrefix(value, "$") {
+		return os.Getenv(strings.TrimPrefix(value, "$"))
+	}
+
+	return value
 }
