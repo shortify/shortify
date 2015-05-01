@@ -45,7 +45,7 @@ func (self *Redirect) Save() error {
 			return err
 		}
 
-		self.Token = ShortifyEncoder.Encode(self.Id + encodingSeed)
+		self.Token = shortifyEncoder.encode(self.Id + encodingSeed)
 	}
 
 	_, err := db.update(self)

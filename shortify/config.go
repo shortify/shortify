@@ -1,8 +1,13 @@
 package shortify
 
-import "code.google.com/p/gcfg"
+import (
+	"code.google.com/p/gcfg"
+	"log"
+)
 
-type config struct {
+var shortifyConfig appConfig
+
+type appConfig struct {
 	Database struct {
 		Provider   string
 		DataSource string
@@ -12,14 +17,27 @@ type config struct {
 	}
 }
 
-func loadConfigFromString(configString string) (config, error) {
-	config := new(config)
-	err := gcfg.ReadStringInto(config, configString)
-	return *config, err
+func Configure(configFile string) bool {
+	cfg, err := loadConfigFromFile(configFile)
+
+	if err != nil {
+		log.Fatalf("Could not load config file from %s", configFile)
+		return false
+	}
+
+	shortifyConfig = cfg
+	shortifyEncoder = encoder{cfg.Settings.Alphabet}
+	return true
 }
 
-func loadConfigFromFile(filePath string) (config, error) {
-	config := new(config)
-	err := gcfg.ReadFileInto(config, filePath)
-	return *config, err
+func loadConfigFromString(configString string) (appConfig, error) {
+	cfg := new(appConfig)
+	err := gcfg.ReadStringInto(cfg, configString)
+	return *cfg, err
+}
+
+func loadConfigFromFile(filePath string) (appConfig, error) {
+	cfg := new(appConfig)
+	err := gcfg.ReadFileInto(cfg, filePath)
+	return *cfg, err
 }
