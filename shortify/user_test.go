@@ -16,11 +16,11 @@ func TestUserSuite(t *testing.T) {
 }
 
 func (suite *UserSuite) SetupSuite() {
-	useTestingDatabase()
+	Configure("../examples/sqlite3.gcfg")
 }
 
 func (suite *UserSuite) TearDownTest() {
-	db.reset()
+	shortifyDb.reset()
 }
 
 func (suite *UserSuite) TestNewUser() {

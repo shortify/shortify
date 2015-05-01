@@ -1,0 +1,8 @@
+[database]
+provider = mysql
+dataSource = tcp://localhost:3306*mydb/myuser/mypassword
+
+[settings]
+alphabet = 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
+port = 8080
+

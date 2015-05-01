@@ -15,11 +15,11 @@ func TestRedirectSuite(t *testing.T) {
 }
 
 func (suite *RedirectSuite) SetupSuite() {
-	useTestingDatabase()
+	Configure("../examples/sqlite3.gcfg")
 }
 
 func (suite *RedirectSuite) TearDownTest() {
-	db.reset()
+	shortifyDb.reset()
 }
 
 func (suite *RedirectSuite) TestNewRedirect() {

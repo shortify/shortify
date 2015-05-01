@@ -1,0 +1,7 @@
+[database]
+provider = sqlite3
+dataSource = /tmp/shortify_sqlite3_sample.bin
+
+[settings]
+alphabet = 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
+port = 8080

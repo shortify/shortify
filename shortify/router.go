@@ -1,6 +1,7 @@
 package shortify
 
 import (
+	"fmt"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
@@ -15,6 +16,7 @@ type route struct {
 }
 
 var routes []route
+var shortifyPort string
 
 func init() {
 	routes = []route{
@@ -35,6 +37,10 @@ func NewRouter() *mux.Router {
 	}
 
 	return router
+}
+
+func ServerPort() string {
+	return fmt.Sprintf(":%s", shortifyPort)
 }
 
 func logger(inner http.Handler, name string) http.Handler {
