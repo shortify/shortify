@@ -5,8 +5,6 @@ import (
 	"log"
 )
 
-var shortifyConfig appConfig
-
 type appConfig struct {
 	Database struct {
 		Provider   string
@@ -25,7 +23,7 @@ func Configure(configFile string) bool {
 		return false
 	}
 
-	shortifyConfig = cfg
+	shortifyDb = newDatabase(cfg.Database.Provider, cfg.Database.DataSource)
 	shortifyEncoder = encoder{cfg.Settings.Alphabet}
 	return true
 }

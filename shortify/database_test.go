@@ -15,7 +15,7 @@ func TestDatabaseSuite(t *testing.T) {
 	suite.Run(t, new(DatabaseSuite))
 }
 
-func (suite *DatabaseSuite) TestdbConnectionInfo() {
+func (suite *DatabaseSuite) TestDbConnectionInfo() {
 	t := suite.T()
 	mysql := dbConnectionInfo{"mysql", ""}
 	postgres := dbConnectionInfo{"postgres", ""}

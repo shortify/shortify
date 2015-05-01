@@ -29,19 +29,19 @@ func NewUser(name string) *User {
 
 func GetUser(name string) (User, error) {
 	var user User
-	err := db.selectOne(&user, getSingleUserQuery, name)
+	err := shortifyDb.selectOne(&user, getSingleUserQuery, name)
 	return user, err
 }
 
 func GetUsers() ([]User, error) {
 	var users []User
-	_, err := db.selectAll(&users, getUsersQuery)
+	_, err := shortifyDb.selectAll(&users, getUsersQuery)
 	return users, err
 }
 
 func IsValidUser(name string, password string) bool {
 	var user User
-	if err := db.selectOne(&user, getSingleUserQuery, name); err != nil {
+	if err := shortifyDb.selectOne(&user, getSingleUserQuery, name); err != nil {
 		return false
 	}
 
@@ -66,10 +66,10 @@ func (self *User) ResetPassword() error {
 
 func (self *User) Save() error {
 	if self.isNew() {
-		return db.insert(self)
+		return shortifyDb.insert(self)
 	}
 
-	_, err := db.update(self)
+	_, err := shortifyDb.update(self)
 	return err
 }
 

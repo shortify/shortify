@@ -4,23 +4,22 @@ import (
 	"database/sql"
 	_ "github.com/mattn/go-sqlite3"
 	"gopkg.in/gorp.v1"
-	"os"
 )
 
-const dbDriverEnvVar = "SHORTIFY_DB_DRIVER"
-const dbDataSourceEnvVar = "SHORTIFY_DB_DATASOURCE"
+var shortifyDb database
 
-var testDbConnectionInfo = dbConnectionInfo{"sqlite3", "/tmp/redirects_db_test.bin"}
-var prodDbConnectionInfo = dbConnectionInfo{os.Getenv(dbDriverEnvVar), os.Getenv(dbDataSourceEnvVar)}
-var db = database{prodDbConnectionInfo, false}
+type database struct {
+	connectionInfo dbConnectionInfo
+	inited         bool
+}
 
 type dbConnectionInfo struct {
-	driver     string
+	provider   string
 	dataSource string
 }
 
 func (self dbConnectionInfo) Dialect() gorp.Dialect {
-	switch self.driver {
+	switch self.provider {
 	case "mysql":
 		return gorp.MySQLDialect{"InnoDB", "UTF8"}
 	case "postgres":
@@ -30,9 +29,9 @@ func (self dbConnectionInfo) Dialect() gorp.Dialect {
 	}
 }
 
-type database struct {
-	connectionInfo dbConnectionInfo
-	inited         bool
+func newDatabase(provider string, dataSource string) database {
+	connectionInfo := dbConnectionInfo{provider, dataSource}
+	return database{connectionInfo, false}
 }
 
 func (self database) reset() error {
@@ -76,14 +75,14 @@ func (self database) selectOne(holder interface{}, query string, args ...interfa
 }
 
 func mapForDatabase(sqlDb *sql.DB) *gorp.DbMap {
-	dbMap := &gorp.DbMap{Db: sqlDb, Dialect: db.connectionInfo.Dialect()}
+	dbMap := &gorp.DbMap{Db: sqlDb, Dialect: shortifyDb.connectionInfo.Dialect()}
 	dbMap.AddTableWithName(Redirect{}, "redirects").SetKeys(true, "Id")
 	dbMap.AddTableWithName(User{}, "users").SetKeys(true, "Id")
 	return dbMap
 }
 
 func withConnection(routine func(*gorp.DbMap) error) error {
-	sqlDb, err := sql.Open(db.connectionInfo.driver, db.connectionInfo.dataSource)
+	sqlDb, err := sql.Open(shortifyDb.connectionInfo.provider, shortifyDb.connectionInfo.dataSource)
 	if err != nil {
 		return err
 	}
@@ -91,14 +90,10 @@ func withConnection(routine func(*gorp.DbMap) error) error {
 	defer sqlDb.Close()
 
 	dbMap := mapForDatabase(sqlDb)
-	if !db.inited {
+	if !shortifyDb.inited {
 		dbMap.CreateTablesIfNotExists()
-		db.inited = true
+		shortifyDb.inited = true
 	}
 
 	return routine(dbMap)
-}
-
-func useTestingDatabase() {
-	db = database{testDbConnectionInfo, false}
 }

@@ -20,7 +20,7 @@ func TestHandlers(t *testing.T) {
 }
 
 func (suite *HandlersSuite) SetupSuite() {
-	useTestingDatabase()
+	Configure("../examples/sqlite3.gcfg")
 }
 
 func (suite *HandlersSuite) SetupTest() {
@@ -29,7 +29,7 @@ func (suite *HandlersSuite) SetupTest() {
 }
 
 func (suite *HandlersSuite) TearDownTest() {
-	db.reset()
+	shortifyDb.reset()
 }
 
 func (suite *HandlersSuite) TestPerformRedirectHandlerWhenFound() {

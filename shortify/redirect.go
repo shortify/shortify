@@ -24,7 +24,7 @@ func NewRedirect(url string) *Redirect {
 
 func FindOrCreateRedirect(url string) (Redirect, error) {
 	var redir Redirect
-	err := db.selectOne(&redir, urlQuery, url)
+	err := shortifyDb.selectOne(&redir, urlQuery, url)
 	if err != nil {
 		redir = *NewRedirect(url)
 		err = redir.Save()
@@ -35,20 +35,20 @@ func FindOrCreateRedirect(url string) (Redirect, error) {
 
 func FindRedirectByToken(token string) (Redirect, error) {
 	var redir Redirect
-	err := db.selectOne(&redir, tokenQuery, token)
+	err := shortifyDb.selectOne(&redir, tokenQuery, token)
 	return redir, err
 }
 
 func (self *Redirect) Save() error {
 	if self.isNew() {
-		if err := db.insert(self); err != nil {
+		if err := shortifyDb.insert(self); err != nil {
 			return err
 		}
 
 		self.Token = shortifyEncoder.encode(self.Id + encodingSeed)
 	}
 
-	_, err := db.update(self)
+	_, err := shortifyDb.update(self)
 	return err
 }
 
