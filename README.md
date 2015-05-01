@@ -10,9 +10,9 @@ Head over to the [latest release] and download the `shortify` executable.
 
 ### Building From Source
 
-```
-$ git clone https://github.com/pseudomuto/shortify-go.git
-$ script/build
+```bash
+git clone https://github.com/pseudomuto/shortify-go.git
+script/build
 ```
 
 ### Configuration
@@ -22,7 +22,7 @@ beside the executable.
 
 Here's an example of a typical config file:
 
-```
+```ini
 [database]
 provider = mysql
 dataSource = tcp://localhost:3306*mydb/myuser/mypassword
@@ -36,14 +36,14 @@ port = 80
 Any of these settings can be supplied as an env var by using `$ENV_VAR_NAME` as the value. For example, if you have the
 following environment variables set:
 
-```
+```bash
 export SHORTIFY_DATASOURCE=tcp://localhost:3306*mydb/myuser/mypassword
 export SHORTIFY_PORT=8080
 ```
 
 Then you can use those values in the configuration like this:
 
-```
+```ini
 [database]
 provider = mysql
 dataSource = $SHORTIFY_DATASOURCE
@@ -84,7 +84,7 @@ Creating redirects requires a valid user account (see below). To create a redire
 auth header on the request and supply a JSON object with a `url` property. Here's an example using
 `CURL`:
 
-```
+```bash
 curl --user <username>:<password> \
   -H "Content-Type: application/json" \
   -d '{ "url": "http://pseudomuto.com/" }' \
