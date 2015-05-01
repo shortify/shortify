@@ -1,0 +1,8 @@
+[database]
+provider = postgres
+dataSource = user=<username> password=<password> dbname=<dbName> sslmode=disable
+
+[settings]
+alphabet = 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
+port = 8080
+
