@@ -34,10 +34,10 @@ func (suite *ConfigSuite) TestLoadConfigFromString() {
 
 func (suite *ConfigSuite) TestLoadConfigFromFile() {
 	t := suite.T()
+	cfg, err := loadConfigFromFile("../examples/sqlite3.gcfg")
 
-	cfg, err := loadConfigFromFile("../data/test_config.gcfg")
 	assert.Nil(t, err)
-	assert.Equal(t, "postgres", cfg.Database.Provider)
-	assert.Equal(t, "user=testuser password=testpass dbname=testdb sslmode=disable", cfg.Database.DataSource)
-	assert.Equal(t, "23456789abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ", cfg.Settings.Alphabet)
+	assert.Equal(t, "sqlite3", cfg.Database.Provider)
+	assert.Equal(t, "/tmp/shortify_sqlite3_sample.bin", cfg.Database.DataSource)
+	assert.Equal(t, "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", cfg.Settings.Alphabet)
 }
