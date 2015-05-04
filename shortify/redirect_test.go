@@ -47,7 +47,7 @@ func (suite *RedirectSuite) TestSaveNewRecord() {
 	assert.NotEmpty(t, redir.Token)
 }
 
-func (suite *RedirectSuite) TestTokenMustBeUnique() {
+func (suite *RedirectSuite) TestSaveErrorsWhenTokenIsntUnique() {
 	t := suite.T()
 
 	originalEncoder := shortifyEncoder
