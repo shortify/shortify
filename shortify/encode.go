@@ -1,12 +1,16 @@
 package shortify
 
-var shortifyEncoder encoder
+var shortifyEncoder encoderInterface
+
+type encoderInterface interface {
+	encode(value int64) string
+}
 
 type encoder struct {
 	charset string
 }
 
-func (self *encoder) encode(value int64) string {
+func (self encoder) encode(value int64) string {
 	if value == 0 {
 		return string(self.charset[0])
 	}
