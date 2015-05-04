@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/pseudomuto/shortify-go/shortify"
+	"github.com/shortify/shortify/shortify"
 	"log"
 	"net/http"
 	"os"
