@@ -1,4 +1,4 @@
-# Shortify [![Build Status](https://travis-ci.org/pseudomuto/shortify-go.svg?branch=master)](https://travis-ci.org/pseudomuto/shortify-go)
+# Shortify [![Build Status](https://travis-ci.org/shortify/shortify.svg?branch=master)](https://travis-ci.org/shortify/shortify)
 
 A simple URL shortener application written in Go.
 
@@ -6,12 +6,12 @@ A simple URL shortener application written in Go.
 
 Head over to the [latest release] and download the `shortify` executable.
 
-[latest release]: https://github.com/pseudomuto/shortify-go/releases/latest
+[latest release]: https://github.com/shortify/shortify/releases/latest
 
 ### Building From Source
 
 ```bash
-git clone https://github.com/pseudomuto/shortify-go.git
+git clone https://github.com/shortify/shortify.git
 script/build
 ```
 
