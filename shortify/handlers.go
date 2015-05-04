@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"io"
 	"net/http"
+	"net/url"
 )
 
 const TokenRouteParam = "token"
@@ -44,7 +45,13 @@ func createRedirectHandler(response http.ResponseWriter, request *http.Request) 
 			return
 		}
 
-		redir, err := FindOrCreateRedirect(params.Url)
+		url, err := url.Parse(params.Url)
+		if err != nil || url.Scheme == "" {
+			renderError(response, HTTPUnprocessableEntity, "Invalid url")
+			return
+		}
+
+		redir, err := FindOrCreateRedirect(url.String())
 		if err != nil {
 			renderError(response, http.StatusInternalServerError, err.Error())
 		} else {

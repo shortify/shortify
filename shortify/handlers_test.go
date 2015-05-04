@@ -128,3 +128,39 @@ func (suite *HandlersSuite) TestCreateRedirectHandlerWithBadUser() {
 
 	assert.Equal(t, http.StatusUnauthorized, response.Code)
 }
+
+func (suite *HandlersSuite) TestCreateRedirectWithRelativeURLFails() {
+	t := suite.T()
+	user := makeUser("testuser", t)
+	paramTest(user, "/some/path", func(response *httptest.ResponseRecorder) {
+		assert.Equal(t, HTTPUnprocessableEntity, response.Code)
+	})
+}
+
+func (suite *HandlersSuite) TestCreateRedirectWithInvalidURLSchemeFails() {
+	t := suite.T()
+	user := makeUser("testuser", t)
+	paramTest(user, "www.google.com", func(response *httptest.ResponseRecorder) {
+		assert.Equal(t, HTTPUnprocessableEntity, response.Code)
+	})
+}
+
+func (suite *HandlersSuite) TestCreateRedirectWithBlankURLFails() {
+	t := suite.T()
+	user := makeUser("testuser", t)
+	paramTest(user, "", func(response *httptest.ResponseRecorder) {
+		assert.Equal(t, HTTPUnprocessableEntity, response.Code)
+	})
+}
+
+func paramTest(user *User, url string, test func(*httptest.ResponseRecorder)) {
+	params := []byte(`{"url": "` + url + `"}`)
+	request, _ := http.NewRequest("POST", "http://example.com/redirects", bytes.NewBuffer(params))
+	request.SetBasicAuth(user.Name, user.Password)
+
+	response := httptest.NewRecorder()
+	router := mux.NewRouter()
+	router.HandleFunc("/redirects", http.HandlerFunc(createRedirectHandler))
+	router.ServeHTTP(response, request)
+	test(response)
+}
