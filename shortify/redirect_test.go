@@ -10,6 +10,13 @@ type RedirectSuite struct {
 	suite.Suite
 }
 
+type TestEncoder struct {
+}
+
+func (self TestEncoder) encode(value int64) string {
+	return "token"
+}
+
 func TestRedirectSuite(t *testing.T) {
 	suite.Run(t, new(RedirectSuite))
 }
@@ -32,13 +39,29 @@ func (suite *RedirectSuite) TestNewRedirect() {
 
 func (suite *RedirectSuite) TestSaveNewRecord() {
 	t := suite.T()
-
 	redir := NewRedirect("http://www.google.com/")
 	err := redir.Save()
 
 	assert.Nil(t, err)
 	assert.NotEqual(t, 0, redir.Id)
 	assert.NotEmpty(t, redir.Token)
+}
+
+func (suite *RedirectSuite) TestSaveErrorsWhenTokenIsntUnique() {
+	t := suite.T()
+
+	originalEncoder := shortifyEncoder
+	shortifyEncoder = TestEncoder{}
+
+	redir := NewRedirect("http://www.google.com/")
+	err := redir.Save()
+	assert.Nil(t, err)
+
+	redir = NewRedirect("http://www.google.com/")
+	err = redir.Save()
+	assert.NotNil(t, err)
+
+	shortifyEncoder = originalEncoder
 }
 
 func (suite *RedirectSuite) TestFindByTokenWhenFound() {

@@ -63,16 +63,6 @@ Currently, there is support for MySQL, PostgreSQL and Sqlite3. Very happy to rec
 
 For examples of how to configure each of these, check out the _examples/_ directory.
 
-#### A Quick Optimization
-
-You can speed up the application by adding _unique_ indexes for the following columns after creating
-the database.
-
-* `"redirects"."token"`
-* `"users"."name"`
-
-In a future version, this will happen automatically.
-
 ## Using Shortify
 
 Shortify is very simple. It has two endpoints:

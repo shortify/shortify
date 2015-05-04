@@ -53,6 +53,17 @@ func (suite *UserSuite) TestUserSave() {
 	assert.WithinDuration(t, time.Now(), user.CreatedAt, 100*time.Millisecond)
 }
 
+func (suite *UserSuite) TestUserNameMustBeUnique() {
+	t := suite.T()
+	user := NewUser("testuser")
+	err := user.Save()
+	assert.Nil(t, err)
+
+	user = NewUser("testuser")
+	err = user.Save()
+	assert.NotNil(t, err)
+}
+
 func (suite *UserSuite) TestIsValidUser() {
 	t := suite.T()
 	user := NewUser("testuser")

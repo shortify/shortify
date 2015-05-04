@@ -36,7 +36,8 @@ func newDatabase(provider string, dataSource string) database {
 
 func (self database) reset() error {
 	return withConnection(func(dbMap *gorp.DbMap) error {
-		return dbMap.TruncateTables()
+		dbMap.DropTables()
+		return dbMap.CreateTablesIfNotExists()
 	})
 }
 
@@ -76,8 +77,8 @@ func (self database) selectOne(holder interface{}, query string, args ...interfa
 
 func mapForDatabase(sqlDb *sql.DB) *gorp.DbMap {
 	dbMap := &gorp.DbMap{Db: sqlDb, Dialect: shortifyDb.connectionInfo.Dialect()}
-	dbMap.AddTableWithName(Redirect{}, "redirects").SetKeys(true, "Id")
-	dbMap.AddTableWithName(User{}, "users").SetKeys(true, "Id")
+	dbMap.AddTableWithName(Redirect{}, "redirects").SetKeys(true, "Id").ColMap("token").SetUnique(true)
+	dbMap.AddTableWithName(User{}, "users").SetKeys(true, "Id").ColMap("name").SetUnique(true)
 	return dbMap
 }
 
