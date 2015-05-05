@@ -45,13 +45,12 @@ func createRedirectHandler(response http.ResponseWriter, request *http.Request) 
 			return
 		}
 
-		url, err := url.Parse(params.Url)
-		if err != nil || url.Scheme == "" {
+		if !isValidURL(params.Url) {
 			renderError(response, HTTPUnprocessableEntity, "Invalid url")
 			return
 		}
 
-		redir, err := FindOrCreateRedirect(url.String())
+		redir, err := FindOrCreateRedirect(params.Url)
 		if err != nil {
 			renderError(response, http.StatusInternalServerError, err.Error())
 		} else {
@@ -60,6 +59,11 @@ func createRedirectHandler(response http.ResponseWriter, request *http.Request) 
 			})
 		}
 	})
+}
+
+func isValidURL(inputUrl string) bool {
+	url, err := url.Parse(inputUrl)
+	return (err == nil && url.Scheme != "")
 }
 
 func renderError(response http.ResponseWriter, code int, message string) {
