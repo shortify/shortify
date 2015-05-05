@@ -1,4 +1,6 @@
-# Shortify [![Build Status](https://travis-ci.org/shortify/shortify.svg?branch=master)](https://travis-ci.org/shortify/shortify)
+# Shortify 
+
+[![Build Status](https://travis-ci.org/shortify/shortify.svg?branch=master)](https://travis-ci.org/shortify/shortify) [![GoDoc](https://godoc.org/github.com/shortify/shortify/shortify?status.svg)](https://godoc.org/github.com/shortify/shortify/shortify)
 
 A simple URL shortener application written in Go.
 
