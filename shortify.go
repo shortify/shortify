@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/shortify/shortify/shortify"
+	"github.com/shortify/shortify/app"
 	"log"
 	"net/http"
 	"os"
@@ -9,10 +9,10 @@ import (
 )
 
 func main() {
-	if shortify.Configure(configFilePath()) {
-		if !shortify.HandleCommandLine(os.Args) {
-			router := shortify.NewRouter()
-			log.Fatal(http.ListenAndServe(shortify.ServerPort(), router))
+	if app.Configure(configFilePath()) {
+		if !app.HandleCommandLine(os.Args) {
+			router := app.NewRouter()
+			log.Fatal(http.ListenAndServe(app.ServerPort(), router))
 		}
 	}
 }

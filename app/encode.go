@@ -1,4 +1,4 @@
-package shortify
+package app
 
 var shortifyEncoder encoderInterface
 
